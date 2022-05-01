@@ -1,6 +1,9 @@
 // import shit
 const { Client, Intents , Collection } = require("discord.js");
 const fs = require("fs");
+const cooldown = new Set();
+const about = require('./about.json')
+
 // Intents
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MEMBERS] });
 
@@ -24,6 +27,11 @@ client.once("ready", () => {
   commands = guild.commands
 
   commands = client.application.commands;
+
+  commands.create({
+    name: 'about',
+    description: 'about this bot.'
+  })
 
   commands.create({
     name: 'hentai',
@@ -78,10 +86,23 @@ client.on("interactionCreate", interaction =>{
 
     }else if(commandName === 'hentai'){
 
+      if (cooldown.has(interaction.user.id)){
+        return interaction.reply({
+          content: 'You are on cooldown please wait before using this command again',
+          ephemeral: true
+        })
+      }
+
+
       if(!interaction.channel.nsfw) return interaction.reply({
         content: 'Please only use this command in a NSFW channel',
         ephemeral: true
       })
+
+      cooldown.add(interaction.user.id);
+        setTimeout(() => {
+          cooldown.delete(interaction.user.id);
+        }, 5000)
 
       const type = options.getString('type')
       const ephemeral = options.getBoolean('private')
@@ -103,6 +124,12 @@ client.on("interactionCreate", interaction =>{
       if(type == 'ero') return interaction.reply({content: hmtai.nsfw.ero(), ephemeral: ephemeral})
 
       interaction.reply({content: hentai, ephemeral: ephemeral})
+      
+    }else if(commandName === 'about'){
+      interaction.reply({
+        content: `This bot is running version ${about.version} from ${about.developers}\nGithub: ${about.github}`,
+        ephemeral: false
+      })
       
     }else return
         

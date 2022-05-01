@@ -1,7 +1,6 @@
 // import shit
 const { Client, Intents , Collection } = require("discord.js");
 const fs = require("fs");
-
 // Intents
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MEMBERS] });
 
@@ -10,6 +9,7 @@ const Discord = require('discord.js')
 const { MessageEmbed } = require('discord.js');
 
 
+// starting up code shit bitch this is simple af
 client.once("ready", () => {
 
   console.log(`${client.user.username} is online`);
@@ -85,8 +85,16 @@ client.on("interactionCreate", interaction =>{
 
       const type = options.getString('type')
       const ephemeral = options.getBoolean('private')
+      if(!ephemeral){
+        const ephemeral = false
+      } 
       
       const hmtai = require("hmtai");
+
+      var max = 500
+
+      const hentai = `http://cdn.realityno.de/hentai/jpgs/${Math.floor(Math.random() * max + 1)}.jpg`
+      console.log(hentai)
 
       if(type == 'hentai') return interaction.reply({content: hmtai.nsfw.hentai(), ephemeral: ephemeral})
 
@@ -94,7 +102,7 @@ client.on("interactionCreate", interaction =>{
 
       if(type == 'ero') return interaction.reply({content: hmtai.nsfw.ero(), ephemeral: ephemeral})
 
-      interaction.reply({content: hmtai.nsfw.hentai()})
+      interaction.reply({content: hentai, ephemeral: ephemeral})
       
     }else return
         
@@ -104,3 +112,4 @@ client.on("interactionCreate", interaction =>{
 })
 
 client.login(process.env.TOKEN);
+
